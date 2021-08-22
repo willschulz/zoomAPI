@@ -24,7 +24,7 @@ cat_function <- function(love=TRUE){
 #' @param client_secret Client secret associated with your Zoom app.
 #' @param redirect_uri Redirect URI associated with your Zoom app.
 #' @param app_name Optional app name, for organizational purposes.
-#' @param save Save the token in the home directory?  Defaults to TRUE.
+#' @param save Save token object to home directory?
 #' @keywords Auth
 #' @export
 #' @examples
@@ -36,8 +36,9 @@ makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", sav
   message("Opening a browser window to authenticate.  After authentication, copy code from redirect URL below to complete token creation...")
   zoom_token <- httr::oauth2.0_token(zoom_endpoint, zoom_app, use_basic_auth = TRUE, query_authorize_extra=list(prompt="none"), cache=FALSE, use_oob = TRUE, oob_value = redirect_uri)
   if(save){
-    Sys.setenv(ZOOM_TOKEN = "teststring")
-    saveRDS(zoom_token, file = "~/.ZOOM_TOKEN.rds")
+    expanded_path <- path.expand("~/.ZOOM_TOKEN.rds")
+    Sys.setenv(ZOOM_TOKEN = expanded_path)
+    saveRDS(zoom_token, file = expanded_path)
     }
   return(zoom_token)
 }
@@ -54,5 +55,5 @@ loadToken <- function() {
   if(file.exists("~/.ZOOM_TOKEN.rds"))
   {return(readRDS("~/.ZOOM_TOKEN.rds"))}
   else
-  {stop("No Zoom token found.  Please run zoomR::makeToken()")}
+  {stop("No Zoom token found.  Please run zoomAPI::makeToken()")}
 }

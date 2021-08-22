@@ -15,7 +15,7 @@ makeToken(client_id, client_secret, redirect_uri, app_name = "", save = TRUE)
 
 \item{app_name}{Optional app name, for organizational purposes.}
 
-\item{save}{Save the token in the home directory?  Defaults to TRUE.}
+\item{save}{Save token object to home directory?}
 }
 \description{
 This function allows you to make a Zoom API token from your app.
