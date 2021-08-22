@@ -54,14 +54,15 @@ loadToken <- function() {
 #' @keywords users
 #' @export
 #' @examples
-#' loadToken()
+#' user()
 
-getUser <- function(user_id = "me", token = NULL){
+listUser <- function(user_id = "me", token = NULL){
   request_base_url = "https://api.zoom.us/v2/"
   if (is.null(token)) {token <- zoomAPI::loadToken()}
   request_result <- httr::GET(url = paste0(request_base_url, "users/me"),
                               config = httr::config(token = token))
   content <- httr::content(request_result)
+  content
   return(content)
 }
 
@@ -73,14 +74,194 @@ getUser <- function(user_id = "me", token = NULL){
 #' @keywords users
 #' @export
 #' @examples
-#' getUserMeetings()
+#' userMeetings()
 
-getUserMeetings <- function(user_id = "me", token = NULL){
+listUserMeetings <- function(user_id = "me", token = NULL){
   request_base_url = "https://api.zoom.us/v2/"
   if (is.null(token)) {token <- zoomAPI::loadToken()}
-  request_result <- httr::GET(url = paste0(request_base_url, "users/me/meetings"),
+  request_result <- httr::GET(url = paste0(request_base_url, "users/",user_id,"/meetings"),
                               config = httr::config(token = token))
   content <- httr::content(request_result)
   content <- do.call(dplyr::bind_rows, content$meetings)
+  return(content)
+}
+
+
+#' Get Meeting Info
+#'
+#' Query the /meetings/{meeting_id} endpoint.
+#' @param meeting_id Specify ID of meeting to lookup.
+#' @keywords meetings
+#' @export
+#' @examples
+#' meetingInfo()
+
+meetingInfo <- function(meeting_id, token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::GET(url = paste0(request_base_url, "/meetings/", meeting_id),
+                              config = httr::config(token = token))
+  content <- httr::content(request_result)
+  #content <- do.call(dplyr::bind_rows, content$meetings)
+  return(content)
+}
+
+
+#' List Cloud Recordings
+#'
+#' Query the /users/{user_id}/recordings endpoint.
+#' @param meeting_id Specify user ID whose recordings to lookup.
+#' @keywords recordings
+#' @export
+#' @examples
+#' listRecordings()
+
+listRecordings <- function(user_id = "me", token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::GET(url = paste0(request_base_url, "users/",user_id,"/recordings"),
+                              config = httr::config(token = token))
+  content <- httr::content(request_result)
+  #content <- do.call(dplyr::bind_rows, content$meetings)
+  return(content)
+}
+
+
+#' List Meeting Polls
+#'
+#' Query the /users/{meeting_id}/polls endpoint.
+#' @param meeting_id Specify meeting ID whose polls to lookup.
+#' @keywords polls
+#' @export
+#' @examples
+#' listMeetingPolls()
+
+listMeetingPolls <- function(meeting_id, token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::GET(url = paste0(request_base_url, "/meetings/",meeting_id,"/polls"),
+                              config = httr::config(token = token))
+  content <- httr::content(request_result)
+  #content <- do.call(dplyr::bind_rows, content$meetings)
+  return(content)
+}
+
+
+#' Get Meeting Poll Results
+#'
+#' Query the /past_meetings/{meeting_id}/polls endpoint.
+#' @param meeting_id Specify meeting ID whose recordings to lookup.
+#' @keywords polls
+#' @export
+#' @examples
+#' getMeetingPollsResults()
+
+getMeetingPollsResults <- function(meeting_id, token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::GET(url = paste0(request_base_url, "/past_meetings/",meeting_id,"/polls"),
+                              config = httr::config(token = token))
+  content <- httr::content(request_result)
+  #content <- do.call(dplyr::bind_rows, content$meetings)
+  return(content)
+}
+
+
+#' List User Meeting Templates
+#'
+#' Query the /users/{user_id}/meeting_templates endpoint.
+#' @param meeting_id Specify user ID whose recordings to lookup.  Defaults to "me".
+#' @keywords templates
+#' @export
+#' @examples
+#' listTemplates()
+
+listTemplates <- function(user_id = "me", token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::GET(url = paste0(request_base_url, "users/me/meeting_templates"),
+                              config = httr::config(token = token))
+  content <- httr::content(request_result)
+  #content <- do.call(dplyr::bind_rows, content$meetings)
+  return(content)
+}
+
+
+#' Create a new meeting.
+#'
+#' Post to the /users/{user_id}/meetings endpoint.
+#' @param topic Topic/title of meeting.
+#' @param start_time Starting time of meeting.  For example, "2021-08-19T17:10:00".
+#' @param duration Duration of meeting in minutes.  Defaults to 60.
+#' @param type Type of meeting.  Defaults to 2.
+#' @param pre_schedule Pre-schedule meeting? Defaults to FALSE.
+#' @param timezone Time zone to schedule meeting.  Defaults to "America/New_York".
+#' @param template_id Template ID for creating meeting.  Defaults to "".
+#' @param user_id Specify user ID to create a meeting for.  Defaults to "me".
+#' @keywords meetings
+#' @export
+#' @examples
+#' createMeeting()
+
+createMeeting <- function(topic, start_time, duration = 60, type=2, pre_schedule = FALSE, timezone = "America/New_York", template_id = "", user_id = "me", token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::POST(url =  paste0(request_base_url, "users/me/meetings"),
+                               config = httr::config(token = token),
+                               body = list(topic = topic,
+                                           type = type,
+                                           pre_schedule = pre_schedule,
+                                           start_time = start_time,
+                                           duration = duration,
+                                           timezone = timezone,
+                                           template_id = template_id),
+                               encode = "json")
+  content <- httr::content(request_result)
+  #content <- do.call(dplyr::bind_rows, content$meetings)
+  return(content)
+}
+
+
+#' List Meeting Registrants
+#'
+#' Query the /meetings/{meeting_id}/registrants endpoint.
+#' @param meeting_id Specify user ID whose recordings to lookup.  Defaults to "me".
+#' @keywords registration
+#' @export
+#' @examples
+#' listMeetingRegistrants()
+
+listMeetingRegistrants <- function(meeting_id, token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::GET(url = paste0(request_base_url, "meetings/",meeting_id,"/registrants"),
+                              config = httr::config(token = token))
+  content <- httr::content(request_result)
+  #content <- do.call(dplyr::bind_rows, content$meetings)
+  return(content)
+}
+
+
+#' Register Participants for a Meeting
+#'
+#' Post to the /meetings/{meeting_id}/registrants endpoint.
+#' @param meeting_id ID of the meeting to register the participant for.
+#' @param email Registrant email.
+#' @param first_name Registrant first name.
+#' @keywords registration
+#' @export
+#' @examples
+#' addRegistrant()
+
+addRegistrant <- function(meeting_id, email, first_name, token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::POST(url =  paste0(request_base_url, "users/me/meetings"),
+                               config = httr::config(token = token),
+                               body = list(email = email,
+                                           first_name = first_name),
+                               encode = "json")
+  content <- httr::content(request_result)
+  #content <- do.call(dplyr::bind_rows, content$meetings)
   return(content)
 }
