@@ -52,8 +52,9 @@ makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", sav
 #' loadToken()
 
 loadToken <- function() {
-  if(file.exists("~/.ZOOM_TOKEN.rds"))
-  {return(readRDS("~/.ZOOM_TOKEN.rds"))}
-  else
-  {stop("No Zoom token found.  Please run zoomAPI::makeToken()")}
+  token_location <- Sys.getenv('ZOOM_TOKEN')
+     if (identical(token_location, "")) {
+       stop("No saved Zoom token found.  Please run zoomAPI::makeToken()",
+         call.)}
+  return(readRDS(token_location))
 }
