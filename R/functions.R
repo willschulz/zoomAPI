@@ -1,21 +1,3 @@
-#' A Cat Function
-#'
-#' This function allows you to express your love of cats.
-#' @param love Do you love cats? Defaults to TRUE.
-#' @keywords cats
-#' @export
-#' @examples
-#' cat_function()
-
-cat_function <- function(love=TRUE){
-  if(love==TRUE){
-    print("I love cats!")
-  }
-  else {
-    print("I am not a cool person.")
-  }
-}
-
 
 #' Make a Zoom Token
 #'
@@ -25,7 +7,7 @@ cat_function <- function(love=TRUE){
 #' @param redirect_uri Redirect URI associated with your Zoom app.
 #' @param app_name Optional app name, for organizational purposes.
 #' @param save Save token object to home directory?
-#' @keywords Auth
+#' @keywords auth
 #' @export
 #' @examples
 #' makeToken()
@@ -46,7 +28,7 @@ makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", sav
 #' Load Saved Zoom Token
 #'
 #' This function allows you to load a Zoom API token previously saved in the home directory.
-#' @keywords Auth
+#' @keywords auth
 #' @export
 #' @examples
 #' loadToken()
@@ -57,4 +39,23 @@ loadToken <- function() {
        stop("No saved Zoom token found.  Please run zoomAPI::makeToken()",
          call. = FALSE)}
   return(readRDS(token_location))
+}
+
+
+#' Get User
+#'
+#' Query the /users/ endpoint.
+#' @param user_id Specify ID of user to lookup.  Defaults to "me".
+#' @keywords users
+#' @export
+#' @examples
+#' loadToken()
+
+getUser <- function(user_id = "me", token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::GET(url = paste0(request_base_url, "users/me"),
+                              config = httr::config(token = token))
+  content <- httr::content(request_result)
+  return(content)
 }

@@ -23,4 +23,4 @@ This function allows you to make a Zoom API token from your app.
 \examples{
 makeToken()
 }
-\keyword{Auth}
+\keyword{auth}

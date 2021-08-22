@@ -12,4 +12,4 @@ This function allows you to load a Zoom API token previously saved in the home d
 \examples{
 loadToken()
 }
-\keyword{Auth}
+\keyword{auth}
