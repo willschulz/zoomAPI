@@ -24,6 +24,7 @@ makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", sav
       renviron <- c(renviron, paste0("ZOOM_TOKEN = ", expanded_path))
     } else (renviron <- paste0("ZOOM_TOKEN = ", expanded_path))
     writeLines(renviron, "~/.Renviron")
+    Sys.setenv(ZOOM_TOKEN = expanded_path)
     saveRDS(zoom_token, file = expanded_path)
     }
   return(zoom_token)
