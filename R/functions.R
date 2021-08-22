@@ -55,6 +55,6 @@ loadToken <- function() {
   token_location <- Sys.getenv('ZOOM_TOKEN')
      if (identical(token_location, "")) {
        stop("No saved Zoom token found.  Please run zoomAPI::makeToken()",
-         call.)}
+         call. = FALSE)}
   return(readRDS(token_location))
 }
