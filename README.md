@@ -1,7 +1,8 @@
 
 # zoomAPI
 
-An R wrapper for the Zoom API
+An R wrapper for the Zoom API. See API Reference here:
+<https://marketplace.zoom.us/docs/api-reference/introduction>.
 
 ## Getting Started
 
