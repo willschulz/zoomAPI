@@ -19,7 +19,7 @@ makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", sav
   zoom_token <- httr::oauth2.0_token(zoom_endpoint, zoom_app, use_basic_auth = TRUE, query_authorize_extra=list(prompt="none"), cache=FALSE, use_oob = TRUE, oob_value = redirect_uri)
   if(save){
     expanded_path <- path.expand("~/.ZOOM_TOKEN.rds")
-    if (file.exists("~/.Renfiron")){
+    if (file.exists("~/.Renviron")){
       renviron <- readLines("~/.Renviron")
       renviron <- c(renviron, paste0("ZOOM_TOKEN = ", expanded_path))
     } else (renviron <- paste0("ZOOM_TOKEN = ", expanded_path))
