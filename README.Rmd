@@ -1,0 +1,30 @@
+---
+title: "README"
+author: "Will Schulz"
+date: "8/22/2021"
+output: github_document
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  eval = FALSE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+library(knitr)
+```
+
+# zoomAPI
+
+An R wrapper for the Zoom API
+
+## Getting Started
+
+To get started using the zoom API, you must create an OAuth app accessible to your Zoom account, which must be Pro or higher.
+
+```{r}
+
+
+```
