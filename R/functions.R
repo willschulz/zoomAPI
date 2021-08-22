@@ -35,7 +35,10 @@ makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", sav
   zoom_app <- httr::oauth_app(appname = app_name, key = client_id, secret = client_secret, redirect_uri = redirect_uri)
   message("Opening a browser window to authenticate.  After authentication, copy code from redirect URL below to complete token creation...")
   zoom_token <- httr::oauth2.0_token(zoom_endpoint, zoom_app, use_basic_auth = TRUE, query_authorize_extra=list(prompt="none"), cache=FALSE, use_oob = TRUE, oob_value = redirect_uri)
-  if(save){saveRDS(zoom_token, file = "~/.ZOOMR_TOKEN.rds")}
+  if(save){
+    Sys.setenv(ZOOM_TOKEN = "teststring")
+    saveRDS(zoom_token, file = "~/.ZOOM_TOKEN.rds")
+    }
   return(zoom_token)
 }
 
@@ -48,8 +51,8 @@ makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", sav
 #' loadToken()
 
 loadToken <- function() {
-  if(file.exists("~/.ZOOMR_TOKEN.rds"))
-  {return(readRDS("~/.ZOOMR_TOKEN.rds"))}
+  if(file.exists("~/.ZOOM_TOKEN.rds"))
+  {return(readRDS("~/.ZOOM_TOKEN.rds"))}
   else
   {stop("No Zoom token found.  Please run zoomR::makeToken()")}
 }
