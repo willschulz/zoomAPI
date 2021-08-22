@@ -59,3 +59,23 @@ getUser <- function(user_id = "me", token = NULL){
   content <- httr::content(request_result)
   return(content)
 }
+
+
+#' Get User Meetings
+#'
+#' Query the /users/{user_id}/meetings endpoint.
+#' @param user_id Specify ID of user whose meetings to lookup.  Defaults to "me".
+#' @keywords users
+#' @export
+#' @examples
+#' getMyMeetings()
+
+getMyMeetings <- function(user_id = "me", token = NULL){
+  request_base_url = "https://api.zoom.us/v2/"
+  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  request_result <- httr::GET(url = paste0(request_base_url, "users/me/meetings"),
+                              config = httr::config(token = token))
+  content <- httr::content(request_result)
+  content <- do.call(dplyr::bind_rows, content$meetings)
+  return(content)
+}
