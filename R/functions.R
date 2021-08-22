@@ -68,9 +68,9 @@ getUser <- function(user_id = "me", token = NULL){
 #' @keywords users
 #' @export
 #' @examples
-#' getMyMeetings()
+#' getUserMeetings()
 
-getMyMeetings <- function(user_id = "me", token = NULL){
+getUserMeetings <- function(user_id = "me", token = NULL){
   request_base_url = "https://api.zoom.us/v2/"
   if (is.null(token)) {token <- zoomAPI::loadToken()}
   request_result <- httr::GET(url = paste0(request_base_url, "users/me/meetings"),
