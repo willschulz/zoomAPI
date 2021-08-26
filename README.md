@@ -16,56 +16,61 @@ accessible to your Zoom account, which must be Pro or higher (this
 includes Education accounts).
 
 ``` r
-zoomAPI::makeToken(client_id = "XXXXXXX", client_secret = "YYYYYYY", redirect_uri = "https://www.ZZZZZZZ.com", app_name = "")
+makeToken(client_id = "XXXXXXX", client_secret = "YYYYYYY", redirect_uri = "https://www.ZZZZZZZ.com", app_name = "")
 ```
 
-## Get User Info
-
-Try an API call by fetching your own user information:
+## User Info
 
 ``` r
-zoomAPI::listUser()
+listUser()
 ```
 
-## List User’s Meetings
+This should return your own user information. If it does not, there has
+been an error.
+
+## Meeting Info
 
 ``` r
-zoomAPI::listUserMeetings()
+my_meetings <- listUserMeetings()
+my_meetings
+
+meeting_info <- meetingInfo(meeting_id = my_meetings$id[1])
+meeting_info
+
+meeting_polls <- listMeetingPolls(meeting_id = my_meetings$id[1])
+meeting_polls
+
+meeting_poll_results <- getMeetingPollsResults(meeting_id = my_meetings$id[1])
+meeting_poll_results
 ```
 
-## Look Up Specific Meeting Info
+## Templates
 
 ``` r
-zoomAPI::meetingInfo(meeting_id = "98354593291")
+listTemplates()
 ```
 
+## Create Meetings and Register Participants
+
 ``` r
-zoomAPI::listMeetingPolls(meeting_id = "98354593291")
+#createMeeting(topic = "test_topic", start_time = "2021-08-22T17:35:00", duration = 10)
+
+#create a meeting starting in 5 minutes:
+new_meeting <- createMeeting(topic = "Zoom API Test Meeting", start_time = as.POSIXct(Sys.time() + 5*60), duration = 10, settings = list(approval_type = 0))
+
+listUserMeetings()
 ```
 
+Now we can register participants for this meeting.
+
 ``` r
-zoomAPI::getMeetingPollsResults(meeting_id = "98354593291")
+addRegistrant(meeting_id = new_meeting$id, email = "person@email.com", first_name = "Test Registrant")
+
+listMeetingRegistrants(meeting_id = new_meeting$id)
 ```
 
-``` r
-zoomAPI::listTemplates()
-```
+## Recordings
 
 ``` r
-
-zoomAPI::createMeeting(topic = "test_topic", start_time = "2021-08-22T17:35:00", duration = 10)
-```
-
-``` r
-
-zoomAPI::listMeetingRegistrants(meeting_id = "97864966163")
-```
-
-``` r
-
-zoomAPI::addRegistrant(meeting_id = "92581841447", email = "wschulz@princeton.edu", first_name = "Will")
-```
-
-``` r
-zoomAPI::listRecordings()
+listRecordings()
 ```

@@ -221,7 +221,8 @@ listMeetingRegistrants <- function(meeting_id, token_cache = "~/.zoom_token_cach
   request_result <- httr::GET(url = paste0(request_base_url, "meetings/",meeting_id,"/registrants"),
                               config = httr::config(token = readRDS(token_cache)[[1]]))
   content <- httr::content(request_result)
-  #parse
+  if (content$total_records>content$page_size) {stop("Number of records exceeds page size.  Implement pagination to retrieve full data.")}
+  content <- do.call(dplyr::bind_rows, lapply(content$registrants, unlist)) #parse
   return(content)
 }
 

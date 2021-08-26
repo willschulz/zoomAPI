@@ -69,41 +69,25 @@ listTemplates()
 ```{r}
 #createMeeting(topic = "test_topic", start_time = "2021-08-22T17:35:00", duration = 10)
 
-#create a meeting starting in 1 minute:
-new_meeting <- createMeeting(topic = "test_meeting", start_time = as.POSIXct(Sys.time() + 60), duration = 10)
+#create a meeting starting in 5 minutes:
+new_meeting <- createMeeting(topic = "Zoom API Test Meeting", start_time = as.POSIXct(Sys.time() + 5*60), duration = 10, settings = list(approval_type = 0))
 
-new_meeting <- createMeeting(topic = "approval_type_0_attempt_3", start_time = as.POSIXct(Sys.time() + 60), duration = 10, settings = list(approval_type = 0))
-
-new_meeting
-
-new_meeting$settings$approval_type
-
-new_meeting$settings$reg
+listUserMeetings()
 ```
 
 
 Now we can register participants for this meeting.
 
 ```{r}
-test_registrant <- addRegistrant(meeting_id = new_meeting$id, email = "william.small.schulz@gmail.com", first_name = "Test Registrant 1")
-test_registrant
+addRegistrant(meeting_id = new_meeting$id, email = "person@email.com", first_name = "Test Registrant")
 
 listMeetingRegistrants(meeting_id = new_meeting$id)
 ```
 
+## Recordings
 
 ```{r}
-
-
-
-
-```
-
-
-
-
-```{r}
-zoomAPI::listRecordings()
+listRecordings()
 
 ```
 
