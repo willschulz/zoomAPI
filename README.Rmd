@@ -67,28 +67,34 @@ listTemplates()
 ## Create Meetings and Register Participants
 
 ```{r}
-createMeeting(topic = "test_topic", start_time = "2021-08-22T17:35:00", duration = 10)
+#createMeeting(topic = "test_topic", start_time = "2021-08-22T17:35:00", duration = 10)
 
-createMeeting(topic = "test_topic", start_time = as.POSIXct(Sys.time() + 60), duration = 10)
+#create a meeting starting in 1 minute:
+new_meeting <- createMeeting(topic = "test_meeting", start_time = as.POSIXct(Sys.time() + 60), duration = 10)
 
+new_meeting
 
+new_meeting$settings
 
+new_meeting$settings$reg
 ```
 
 
+Now we can register participants for this meeting.
+
+```{r}
+addRegistrant(meeting_id = new_meeting$id, email = "person@email.com", first_name = "Test Registrant")
+
+listMeetingRegistrants(meeting_id = new_meeting$id)
+
+listMeetingRegistrants(meeting_id = "97864966163")
+```
 
 
 ```{r}
 
 
-zoomAPI::listMeetingRegistrants(meeting_id = "97864966163")
-```
 
-
-```{r}
-
-
-zoomAPI::addRegistrant(meeting_id = "92581841447", email = "wschulz@princeton.edu", first_name = "Will")
 
 ```
 

@@ -11,6 +11,7 @@ createMeeting(
   type = 2,
   pre_schedule = FALSE,
   timezone = "America/New_York",
+  approval_type = 0,
   template_id = "",
   user_id = "me",
   token_cache = "~/.zoom_token_cache"
@@ -28,6 +29,8 @@ createMeeting(
 \item{pre_schedule}{Pre-schedule meeting? Defaults to FALSE.}
 
 \item{timezone}{Time zone to schedule meeting.  Defaults to "America/New_York".}
+
+\item{approval_type}{Approval type for meeting: 0,1,2 (defaults to 0).}
 
 \item{template_id}{Template ID for creating meeting.  Defaults to "".}
 
