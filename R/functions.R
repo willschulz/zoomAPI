@@ -188,7 +188,7 @@ createMeeting <- function(topic, start_time, duration = 60, type=2, pre_schedule
   request_base_url = "https://api.zoom.us/v2/"
   if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::POST(url =  paste0(request_base_url, "users/me/meetings"),
-                               config = httr::config(token = token),
+                               config = httr::config(token = readRDS(token_cache)[[1]]),
                                body = list(topic = topic,
                                            type = type,
                                            pre_schedule = pre_schedule,
