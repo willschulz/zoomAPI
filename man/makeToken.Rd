@@ -4,7 +4,13 @@
 \alias{makeToken}
 \title{Make a Zoom Token}
 \usage{
-makeToken(client_id, client_secret, redirect_uri, app_name = "", save = TRUE)
+makeToken(
+  client_id,
+  client_secret,
+  redirect_uri,
+  app_name = "",
+  cache = "~/.zoom_token_cache"
+)
 }
 \arguments{
 \item{client_id}{Client ID associated with your Zoom app.}

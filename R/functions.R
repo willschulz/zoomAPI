@@ -12,23 +12,33 @@
 #' @examples
 #' makeToken()
 
-makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", save = TRUE){
+makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", cache = "~/.zoom_token_cache"){
   zoom_endpoint <- httr::oauth_endpoint(authorize = "https://zoom.us/oauth/authorize", access = "https://zoom.us/oauth/token")
   zoom_app <- httr::oauth_app(appname = app_name, key = client_id, secret = client_secret, redirect_uri = redirect_uri)
   message("Opening a browser window to authenticate.  After authentication, copy code from redirect URL below to complete token creation...")
-  zoom_token <- httr::oauth2.0_token(zoom_endpoint, zoom_app, use_basic_auth = TRUE, query_authorize_extra=list(prompt="none"), cache=FALSE, use_oob = TRUE, oob_value = redirect_uri)
-  if(save){
-    expanded_path <- path.expand("~/.ZOOM_TOKEN.rds")
-    if (file.exists("~/.Renviron")){
-      renviron <- readLines("~/.Renviron")
-      renviron <- c(renviron, paste0("ZOOM_TOKEN = ", expanded_path))
-    } else (renviron <- paste0("ZOOM_TOKEN = ", expanded_path))
-    writeLines(renviron, "~/.Renviron")
-    Sys.setenv(ZOOM_TOKEN = expanded_path)
-    saveRDS(zoom_token, file = expanded_path)
-    }
+  zoom_token <- httr::oauth2.0_token(zoom_endpoint, zoom_app, use_basic_auth = TRUE, query_authorize_extra=list(prompt="none"), cache=cache, use_oob = TRUE, oob_value = redirect_uri)
   return(zoom_token)
 }
+
+# makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", save = TRUE){
+#   zoom_endpoint <- httr::oauth_endpoint(authorize = "https://zoom.us/oauth/authorize", access = "https://zoom.us/oauth/token")
+#   zoom_app <- httr::oauth_app(appname = app_name, key = client_id, secret = client_secret, redirect_uri = redirect_uri)
+#   message("Opening a browser window to authenticate.  After authentication, copy code from redirect URL below to complete token creation...")
+#   zoom_token <- httr::oauth2.0_token(zoom_endpoint, zoom_app, use_basic_auth = TRUE, query_authorize_extra=list(prompt="none"), cache=FALSE, use_oob = TRUE, oob_value = redirect_uri)
+#   if(save){
+#     expanded_path <- path.expand("~/.ZOOM_TOKEN.rds")
+#     if (file.exists("~/.Renviron")){
+#       renviron <- readLines("~/.Renviron")
+#       renviron <- c(renviron, paste0("ZOOM_TOKEN = ", expanded_path))
+#     } else (renviron <- paste0("ZOOM_TOKEN = ", expanded_path))
+#     writeLines(renviron, "~/.Renviron")
+#     Sys.setenv(ZOOM_TOKEN = expanded_path)
+#     saveRDS(zoom_token, file = expanded_path)
+#     }
+#   return(zoom_token)
+# }
+
+
 
 #' Load Saved Zoom Token
 #'
@@ -51,20 +61,30 @@ loadToken <- function() {
 #'
 #' Query the /users/ endpoint.
 #' @param user_id Specify ID of user to lookup.  Defaults to "me".
+#' @param token Path to token cache
 #' @keywords users
 #' @export
 #' @examples
 #' user()
 
-listUser <- function(user_id = "me", token = NULL){
+listUser <- function(user_id = "me", token = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
   request_result <- httr::GET(url = paste0(request_base_url, "users/me"),
-                              config = httr::config(token = token))
+                              config = httr::config(token = readRDS("~/.zoom_token_cache")[[1]]))
   content <- httr::content(request_result)
   content
   return(content)
 }
+
+# listUser <- function(user_id = "me", token = NULL){
+#   request_base_url = "https://api.zoom.us/v2/"
+#   if (is.null(token)) {token <- zoomAPI::loadToken()}
+#   request_result <- httr::GET(url = paste0(request_base_url, "users/me"),
+#                               config = httr::config(token = token))
+#   content <- httr::content(request_result)
+#   content
+#   return(content)
+# }
 
 
 #' Get User Meetings

@@ -4,10 +4,12 @@
 \alias{listUser}
 \title{Get User}
 \usage{
-listUser(user_id = "me", token = NULL)
+listUser(user_id = "me", token = "~/.zoom_token_cache")
 }
 \arguments{
 \item{user_id}{Specify ID of user to lookup.  Defaults to "me".}
+
+\item{token}{Path to token cache}
 }
 \description{
 Query the /users/ endpoint.
