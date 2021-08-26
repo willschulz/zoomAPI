@@ -4,10 +4,12 @@
 \alias{listUserMeetings}
 \title{Get User Meetings}
 \usage{
-listUserMeetings(user_id = "me", token = NULL)
+listUserMeetings(user_id = "me", token_cache = "~/.zoom_token_cache")
 }
 \arguments{
 \item{user_id}{Specify ID of user whose meetings to lookup.  Defaults to "me".}
+
+\item{token_cache}{Path to token cache}
 }
 \description{
 Query the /users/{user_id}/meetings endpoint.

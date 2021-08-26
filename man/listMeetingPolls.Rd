@@ -4,10 +4,12 @@
 \alias{listMeetingPolls}
 \title{List Meeting Polls}
 \usage{
-listMeetingPolls(meeting_id, token = NULL)
+listMeetingPolls(meeting_id, token_cache = "~/.zoom_token_cache")
 }
 \arguments{
 \item{meeting_id}{Specify meeting ID whose polls to lookup.}
+
+\item{token_cache}{Path to token cache}
 }
 \description{
 Query the /users/{meeting_id}/polls endpoint.

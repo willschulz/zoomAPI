@@ -4,10 +4,12 @@
 \alias{meetingInfo}
 \title{Get Meeting Info}
 \usage{
-meetingInfo(meeting_id, token = NULL)
+meetingInfo(meeting_id, token_cache = "~/.zoom_token_cache")
 }
 \arguments{
 \item{meeting_id}{Specify ID of meeting to lookup.}
+
+\item{token_cache}{Path to token cache}
 }
 \description{
 Query the /meetings/{meeting_id} endpoint.

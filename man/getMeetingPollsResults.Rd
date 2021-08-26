@@ -4,10 +4,12 @@
 \alias{getMeetingPollsResults}
 \title{Get Meeting Poll Results}
 \usage{
-getMeetingPollsResults(meeting_id, token = NULL)
+getMeetingPollsResults(meeting_id, token_cache = "~/.zoom_token_cache")
 }
 \arguments{
 \item{meeting_id}{Specify meeting ID whose recordings to lookup.}
+
+\item{token_cache}{Path to token cache}
 }
 \description{
 Query the /past_meetings/{meeting_id}/polls endpoint.

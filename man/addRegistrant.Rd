@@ -4,7 +4,12 @@
 \alias{addRegistrant}
 \title{Register Participants for a Meeting}
 \usage{
-addRegistrant(meeting_id, email, first_name, token = NULL)
+addRegistrant(
+  meeting_id,
+  email,
+  first_name,
+  token_cache = "~/.zoom_token_cache"
+)
 }
 \arguments{
 \item{meeting_id}{ID of the meeting to register the participant for.}
@@ -12,6 +17,8 @@ addRegistrant(meeting_id, email, first_name, token = NULL)
 \item{email}{Registrant email.}
 
 \item{first_name}{Registrant first name.}
+
+\item{token_cache}{Path to token cache}
 }
 \description{
 Post to the /meetings/{meeting_id}/registrants endpoint.

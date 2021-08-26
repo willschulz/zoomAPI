@@ -4,10 +4,12 @@
 \alias{listMeetingRegistrants}
 \title{List Meeting Registrants}
 \usage{
-listMeetingRegistrants(meeting_id, token = NULL)
+listMeetingRegistrants(meeting_id, token_cache = "~/.zoom_token_cache")
 }
 \arguments{
 \item{meeting_id}{Specify user ID whose recordings to lookup.  Defaults to "me".}
+
+\item{token_cache}{Path to token cache}
 }
 \description{
 Query the /meetings/{meeting_id}/registrants endpoint.

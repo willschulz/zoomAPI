@@ -20,89 +20,44 @@ makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", cac
   return(zoom_token)
 }
 
-# makeToken <- function(client_id, client_secret, redirect_uri, app_name = "", save = TRUE){
-#   zoom_endpoint <- httr::oauth_endpoint(authorize = "https://zoom.us/oauth/authorize", access = "https://zoom.us/oauth/token")
-#   zoom_app <- httr::oauth_app(appname = app_name, key = client_id, secret = client_secret, redirect_uri = redirect_uri)
-#   message("Opening a browser window to authenticate.  After authentication, copy code from redirect URL below to complete token creation...")
-#   zoom_token <- httr::oauth2.0_token(zoom_endpoint, zoom_app, use_basic_auth = TRUE, query_authorize_extra=list(prompt="none"), cache=FALSE, use_oob = TRUE, oob_value = redirect_uri)
-#   if(save){
-#     expanded_path <- path.expand("~/.ZOOM_TOKEN.rds")
-#     if (file.exists("~/.Renviron")){
-#       renviron <- readLines("~/.Renviron")
-#       renviron <- c(renviron, paste0("ZOOM_TOKEN = ", expanded_path))
-#     } else (renviron <- paste0("ZOOM_TOKEN = ", expanded_path))
-#     writeLines(renviron, "~/.Renviron")
-#     Sys.setenv(ZOOM_TOKEN = expanded_path)
-#     saveRDS(zoom_token, file = expanded_path)
-#     }
-#   return(zoom_token)
-# }
-
-
-
-#' Load Saved Zoom Token
-#'
-#' This function allows you to load a Zoom API token previously saved in the home directory.
-#' @keywords auth
-#' @export
-#' @examples
-#' loadToken()
-
-loadToken <- function() {
-  token_location <- Sys.getenv('ZOOM_TOKEN')
-     if (identical(token_location, "")) {
-       stop("No saved Zoom token found.  Please run zoomAPI::makeToken()",
-         call. = FALSE)}
-  return(readRDS(token_location))
-}
-
 
 #' Get User
 #'
 #' Query the /users/ endpoint.
 #' @param user_id Specify ID of user to lookup.  Defaults to "me".
-#' @param token Path to token cache
+#' @param token_cache Path to token cache
 #' @keywords users
 #' @export
 #' @examples
 #' user()
 
-listUser <- function(user_id = "me", token = "~/.zoom_token_cache"){
+listUser <- function(user_id = "me", token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::GET(url = paste0(request_base_url, "users/me"),
-                              config = httr::config(token = readRDS("~/.zoom_token_cache")[[1]]))
+                              config = httr::config(token = readRDS(token_cache)[[1]]))
   content <- httr::content(request_result)
-  content
   return(content)
 }
-
-# listUser <- function(user_id = "me", token = NULL){
-#   request_base_url = "https://api.zoom.us/v2/"
-#   if (is.null(token)) {token <- zoomAPI::loadToken()}
-#   request_result <- httr::GET(url = paste0(request_base_url, "users/me"),
-#                               config = httr::config(token = token))
-#   content <- httr::content(request_result)
-#   content
-#   return(content)
-# }
 
 
 #' Get User Meetings
 #'
 #' Query the /users/{user_id}/meetings endpoint.
 #' @param user_id Specify ID of user whose meetings to lookup.  Defaults to "me".
+#' @param token_cache Path to token cache
 #' @keywords users
 #' @export
 #' @examples
 #' userMeetings()
 
-listUserMeetings <- function(user_id = "me", token = NULL){
+listUserMeetings <- function(user_id = "me", token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::GET(url = paste0(request_base_url, "users/",user_id,"/meetings"),
-                              config = httr::config(token = token))
+                              config = httr::config(token = readRDS(token_cache)[[1]]))
   content <- httr::content(request_result)
-  content <- do.call(dplyr::bind_rows, content$meetings)
+  content <- do.call(dplyr::bind_rows, content$meetings) #parse to dataframe
   return(content)
 }
 
@@ -111,18 +66,19 @@ listUserMeetings <- function(user_id = "me", token = NULL){
 #'
 #' Query the /meetings/{meeting_id} endpoint.
 #' @param meeting_id Specify ID of meeting to lookup.
+#' @param token_cache Path to token cache
 #' @keywords meetings
 #' @export
 #' @examples
 #' meetingInfo()
 
-meetingInfo <- function(meeting_id, token = NULL){
+meetingInfo <- function(meeting_id, token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::GET(url = paste0(request_base_url, "/meetings/", meeting_id),
-                              config = httr::config(token = token))
+                              config = httr::config(token = readRDS(token_cache)[[1]]))
   content <- httr::content(request_result)
-  #content <- do.call(dplyr::bind_rows, content$meetings)
+  #parse
   return(content)
 }
 
@@ -131,18 +87,19 @@ meetingInfo <- function(meeting_id, token = NULL){
 #'
 #' Query the /users/{user_id}/recordings endpoint.
 #' @param meeting_id Specify user ID whose recordings to lookup.
+#' @param token_cache Path to token cache
 #' @keywords recordings
 #' @export
 #' @examples
 #' listRecordings()
 
-listRecordings <- function(user_id = "me", token = NULL){
+listRecordings <- function(user_id = "me", token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::GET(url = paste0(request_base_url, "users/",user_id,"/recordings"),
-                              config = httr::config(token = token))
+                              config = httr::config(token = readRDS(token_cache)[[1]]))
   content <- httr::content(request_result)
-  #content <- do.call(dplyr::bind_rows, content$meetings)
+  #parse
   return(content)
 }
 
@@ -151,18 +108,19 @@ listRecordings <- function(user_id = "me", token = NULL){
 #'
 #' Query the /users/{meeting_id}/polls endpoint.
 #' @param meeting_id Specify meeting ID whose polls to lookup.
+#' @param token_cache Path to token cache
 #' @keywords polls
 #' @export
 #' @examples
 #' listMeetingPolls()
 
-listMeetingPolls <- function(meeting_id, token = NULL){
+listMeetingPolls <- function(meeting_id, token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::GET(url = paste0(request_base_url, "/meetings/",meeting_id,"/polls"),
-                              config = httr::config(token = token))
+                              config = httr::config(token = readRDS(token_cache)[[1]]))
   content <- httr::content(request_result)
-  #content <- do.call(dplyr::bind_rows, content$meetings)
+  #parse
   return(content)
 }
 
@@ -171,18 +129,19 @@ listMeetingPolls <- function(meeting_id, token = NULL){
 #'
 #' Query the /past_meetings/{meeting_id}/polls endpoint.
 #' @param meeting_id Specify meeting ID whose recordings to lookup.
+#' @param token_cache Path to token cache
 #' @keywords polls
 #' @export
 #' @examples
 #' getMeetingPollsResults()
 
-getMeetingPollsResults <- function(meeting_id, token = NULL){
+getMeetingPollsResults <- function(meeting_id, token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::GET(url = paste0(request_base_url, "/past_meetings/",meeting_id,"/polls"),
-                              config = httr::config(token = token))
+                              config = httr::config(token = readRDS(token_cache)[[1]]))
   content <- httr::content(request_result)
-  #content <- do.call(dplyr::bind_rows, content$meetings)
+  #parse
   return(content)
 }
 
@@ -191,18 +150,19 @@ getMeetingPollsResults <- function(meeting_id, token = NULL){
 #'
 #' Query the /users/{user_id}/meeting_templates endpoint.
 #' @param meeting_id Specify user ID whose recordings to lookup.  Defaults to "me".
+#' @param token_cache Path to token cache
 #' @keywords templates
 #' @export
 #' @examples
 #' listTemplates()
 
-listTemplates <- function(user_id = "me", token = NULL){
+listTemplates <- function(user_id = "me", token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::GET(url = paste0(request_base_url, "users/me/meeting_templates"),
-                              config = httr::config(token = token))
+                              config = httr::config(token = readRDS(token_cache)[[1]]))
   content <- httr::content(request_result)
-  #content <- do.call(dplyr::bind_rows, content$meetings)
+  #parse
   return(content)
 }
 
@@ -218,14 +178,15 @@ listTemplates <- function(user_id = "me", token = NULL){
 #' @param timezone Time zone to schedule meeting.  Defaults to "America/New_York".
 #' @param template_id Template ID for creating meeting.  Defaults to "".
 #' @param user_id Specify user ID to create a meeting for.  Defaults to "me".
+#' @param token_cache Path to token cache
 #' @keywords meetings
 #' @export
 #' @examples
 #' createMeeting()
 
-createMeeting <- function(topic, start_time, duration = 60, type=2, pre_schedule = FALSE, timezone = "America/New_York", template_id = "", user_id = "me", token = NULL){
+createMeeting <- function(topic, start_time, duration = 60, type=2, pre_schedule = FALSE, timezone = "America/New_York", template_id = "", user_id = "me", token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::POST(url =  paste0(request_base_url, "users/me/meetings"),
                                config = httr::config(token = token),
                                body = list(topic = topic,
@@ -237,7 +198,7 @@ createMeeting <- function(topic, start_time, duration = 60, type=2, pre_schedule
                                            template_id = template_id),
                                encode = "json")
   content <- httr::content(request_result)
-  #content <- do.call(dplyr::bind_rows, content$meetings)
+  #parse
   return(content)
 }
 
@@ -246,18 +207,19 @@ createMeeting <- function(topic, start_time, duration = 60, type=2, pre_schedule
 #'
 #' Query the /meetings/{meeting_id}/registrants endpoint.
 #' @param meeting_id Specify user ID whose recordings to lookup.  Defaults to "me".
+#' @param token_cache Path to token cache
 #' @keywords registration
 #' @export
 #' @examples
 #' listMeetingRegistrants()
 
-listMeetingRegistrants <- function(meeting_id, token = NULL){
+listMeetingRegistrants <- function(meeting_id, token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::GET(url = paste0(request_base_url, "meetings/",meeting_id,"/registrants"),
-                              config = httr::config(token = token))
+                              config = httr::config(token = readRDS(token_cache)[[1]]))
   content <- httr::content(request_result)
-  #content <- do.call(dplyr::bind_rows, content$meetings)
+  #parse
   return(content)
 }
 
@@ -268,20 +230,21 @@ listMeetingRegistrants <- function(meeting_id, token = NULL){
 #' @param meeting_id ID of the meeting to register the participant for.
 #' @param email Registrant email.
 #' @param first_name Registrant first name.
+#' @param token_cache Path to token cache
 #' @keywords registration
 #' @export
 #' @examples
 #' addRegistrant()
 
-addRegistrant <- function(meeting_id, email, first_name, token = NULL){
+addRegistrant <- function(meeting_id, email, first_name, token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
-  if (is.null(token)) {token <- zoomAPI::loadToken()}
+  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::POST(url =  paste0(request_base_url, "users/me/meetings"),
                                config = httr::config(token = token),
                                body = list(email = email,
                                            first_name = first_name),
                                encode = "json")
   content <- httr::content(request_result)
-  #content <- do.call(dplyr::bind_rows, content$meetings)
+  #parse
   return(content)
 }

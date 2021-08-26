@@ -13,7 +13,7 @@ createMeeting(
   timezone = "America/New_York",
   template_id = "",
   user_id = "me",
-  token = NULL
+  token_cache = "~/.zoom_token_cache"
 )
 }
 \arguments{
@@ -32,6 +32,8 @@ createMeeting(
 \item{template_id}{Template ID for creating meeting.  Defaults to "".}
 
 \item{user_id}{Specify user ID to create a meeting for.  Defaults to "me".}
+
+\item{token_cache}{Path to token cache}
 }
 \description{
 Post to the /users/{user_id}/meetings endpoint.

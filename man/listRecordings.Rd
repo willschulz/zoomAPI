@@ -4,9 +4,11 @@
 \alias{listRecordings}
 \title{List Cloud Recordings}
 \usage{
-listRecordings(user_id = "me", token = NULL)
+listRecordings(user_id = "me", token_cache = "~/.zoom_token_cache")
 }
 \arguments{
+\item{token_cache}{Path to token cache}
+
 \item{meeting_id}{Specify user ID whose recordings to lookup.}
 }
 \description{

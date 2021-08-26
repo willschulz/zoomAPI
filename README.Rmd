@@ -28,9 +28,8 @@ To get started using the zoom API, you must create an OAuth app accessible to yo
 
 
 ```{r}
-zoomAPI::makeToken(client_id = "XXXXXXX", client_secret = "YYYYYYY", redirect_uri = "https://www.ZZZZZZZ.com", app_name = "", save = TRUE)
+zoomAPI::makeToken(client_id = "XXXXXXX", client_secret = "YYYYYYY", redirect_uri = "https://www.ZZZZZZZ.com", app_name = "")
 
-zoomAPI::loadToken()
 ```
 
 ## Get User Info

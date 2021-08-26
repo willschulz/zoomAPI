@@ -4,9 +4,11 @@
 \alias{listTemplates}
 \title{List User Meeting Templates}
 \usage{
-listTemplates(user_id = "me", token = NULL)
+listTemplates(user_id = "me", token_cache = "~/.zoom_token_cache")
 }
 \arguments{
+\item{token_cache}{Path to token cache}
+
 \item{meeting_id}{Specify user ID whose recordings to lookup.  Defaults to "me".}
 }
 \description{
