@@ -176,7 +176,7 @@ listTemplates <- function(user_id = "me", token_cache = "~/.zoom_token_cache"){
 #' @param type Type of meeting.  Defaults to 2.
 #' @param pre_schedule Pre-schedule meeting? Defaults to FALSE.
 #' @param timezone Time zone to schedule meeting.  Defaults to "America/New_York".
-#' @param approval_type Approval type for meeting: 0,1,2 (defaults to 0).
+#' @param settings An optional named list of settings.
 #' @param template_id Template ID for creating meeting.  Defaults to "".
 #' @param user_id Specify user ID to create a meeting for.  Defaults to "me".
 #' @param token_cache Path to token cache
@@ -185,7 +185,7 @@ listTemplates <- function(user_id = "me", token_cache = "~/.zoom_token_cache"){
 #' @examples
 #' createMeeting()
 
-createMeeting <- function(topic, start_time, duration = 60, type=2, pre_schedule = FALSE, timezone = "America/New_York", approval_type = 0, template_id = "", user_id = "me", token_cache = "~/.zoom_token_cache"){
+createMeeting <- function(topic, start_time, duration = 60, type=2, pre_schedule = FALSE, timezone = "America/New_York", settings = list(), template_id = "", user_id = "me", token_cache = "~/.zoom_token_cache"){
   request_base_url = "https://api.zoom.us/v2/"
   if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::POST(url =  paste0(request_base_url, "users/me/meetings"),
@@ -196,7 +196,7 @@ createMeeting <- function(topic, start_time, duration = 60, type=2, pre_schedule
                                            start_time = start_time,
                                            duration = duration,
                                            timezone = timezone,
-                                           approval_type = approval_type,
+                                           settings = settings,
                                            template_id = template_id),
                                encode = "json")
   content <- httr::content(request_result)
@@ -238,13 +238,14 @@ listMeetingRegistrants <- function(meeting_id, token_cache = "~/.zoom_token_cach
 #' @examples
 #' addRegistrant()
 
-addRegistrant <- function(meeting_id, email, first_name, token_cache = "~/.zoom_token_cache"){
+addRegistrant <- function (meeting_id, email, first_name, token_cache = "~/.zoom_token_cache") {
   request_base_url = "https://api.zoom.us/v2/"
-  if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
-  request_result <- httr::POST(url =  paste0(request_base_url, "users/me/meetings"),
-                               config = httr::config(token = readRDS(token_cache)[[1]]),
-                               body = list(email = email,
-                                           first_name = first_name),
+  if (!file.exists(token_cache)) {
+    message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")
+  }
+  request_result <- httr::POST(url = paste0(request_base_url,
+                                            "meetings/",meeting_id,"/registrants"), config = httr::config(token = readRDS(token_cache)[[1]]),
+                               body = list(email = email, first_name = first_name),
                                encode = "json")
   content <- httr::content(request_result)
   #parse
