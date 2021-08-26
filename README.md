@@ -12,12 +12,11 @@ library(zoomAPI)
 ```
 
 To get started using the zoom API, you must create an OAuth app
-accessible to your Zoom account, which must be Pro or higher.
+accessible to your Zoom account, which must be Pro or higher (this
+includes Education accounts).
 
 ``` r
-zoomAPI::makeToken(client_id = "XXXXXXX", client_secret = "YYYYYYY", redirect_uri = "https://www.ZZZZZZZ.com", app_name = "", save = TRUE)
-
-zoomAPI::loadToken()
+zoomAPI::makeToken(client_id = "XXXXXXX", client_secret = "YYYYYYY", redirect_uri = "https://www.ZZZZZZZ.com", app_name = "")
 ```
 
 ## Get User Info

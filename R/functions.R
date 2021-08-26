@@ -240,7 +240,7 @@ addRegistrant <- function(meeting_id, email, first_name, token_cache = "~/.zoom_
   request_base_url = "https://api.zoom.us/v2/"
   if (!file.exists(token_cache)) {message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")}
   request_result <- httr::POST(url =  paste0(request_base_url, "users/me/meetings"),
-                               config = httr::config(token = token),
+                               config = httr::config(token = readRDS(token_cache)[[1]]),
                                body = list(email = email,
                                            first_name = first_name),
                                encode = "json")

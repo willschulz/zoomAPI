@@ -24,62 +24,54 @@ devtools::install_github("willschulz/zoomAPI")
 library(zoomAPI)
 ```
 
-To get started using the zoom API, you must create an OAuth app accessible to your Zoom account, which must be Pro or higher.
+To get started using the zoom API, you must create an OAuth app accessible to your Zoom account, which must be Pro or higher (this includes Education accounts).
 
 
-```{r}
-zoomAPI::makeToken(client_id = "XXXXXXX", client_secret = "YYYYYYY", redirect_uri = "https://www.ZZZZZZZ.com", app_name = "")
-
-```
-
-## Get User Info
-
-Try an API call by fetching your own user information:
-
-```{r}
-zoomAPI::listUser()
-```
-
-
-## List User's Meetings
-
-```{r}
-zoomAPI::listUserMeetings()
+```{r eval=FALSE}
+makeToken(client_id = "XXXXXXX", client_secret = "YYYYYYY", redirect_uri = "https://www.ZZZZZZZ.com", app_name = "")
 
 ```
 
-
-## Look Up Specific Meeting Info
+## User Info
 
 ```{r}
-zoomAPI::meetingInfo(meeting_id = "98354593291")
-
+listUser()
 ```
 
+This should return your own user information.  If it does not, there has been an error.
 
+## Meeting Info
 
 ```{r}
-zoomAPI::listMeetingPolls(meeting_id = "98354593291")
+my_meetings <- listUserMeetings()
+my_meetings
 
+meeting_info <- meetingInfo(meeting_id = my_meetings$id[1])
+meeting_info
+
+meeting_polls <- listMeetingPolls(meeting_id = my_meetings$id[1])
+meeting_polls
+
+meeting_poll_results <- getMeetingPollsResults(meeting_id = my_meetings$id[1])
+meeting_poll_results
 ```
 
+## Templates
 
 ```{r}
-zoomAPI::getMeetingPollsResults(meeting_id = "98354593291")
+listTemplates()
 
 ```
 
 
-```{r}
-zoomAPI::listTemplates()
-
-```
-
+## Create Meetings and Register Participants
 
 ```{r}
+createMeeting(topic = "test_topic", start_time = "2021-08-22T17:35:00", duration = 10)
+
+createMeeting(topic = "test_topic", start_time = as.POSIXct(Sys.time() + 60), duration = 10)
 
 
-zoomAPI::createMeeting(topic = "test_topic", start_time = "2021-08-22T17:35:00", duration = 10)
 
 ```
 
