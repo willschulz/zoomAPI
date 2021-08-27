@@ -252,3 +252,30 @@ addRegistrant <- function (meeting_id, email, first_name, token_cache = "~/.zoom
   #parse
   return(content)
 }
+
+
+#' Create a Poll for a Meeting
+#'
+#' Post to the /meetings/{meeting_id}/polls endpoint.
+#' @param meeting_id ID of the meeting to register the participant for.
+#' @param title Title of poll.
+#' @param questions Questions, formatted appropriately.
+#' @param token_cache Path to token cache
+#' @keywords polls
+#' @export
+#' @examples
+#' addPoll()
+
+addPoll <- function (meeting_id, title, questions, token_cache = "~/.zoom_token_cache") {
+  request_base_url = "https://api.zoom.us/v2/"
+  if (!file.exists(token_cache)) {
+    message("Couldn't find a token at ", token_cache, "\nPlease run makeToken(), or else specify the correct cache location.")
+  }
+  request_result <- httr::POST(url = paste0(request_base_url,
+                                            "meetings/",meeting_id,"/polls"),
+                               config = httr::config(token = readRDS(token_cache)[[1]]),
+                               body = list(title = title, questions = questions),
+                               encode = "json")
+  content <- httr::content(request_result)
+  return(content)
+}
